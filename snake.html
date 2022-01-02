@@ -1,0 +1,48 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snake Game</title>
+  <style>
+    *{
+      box-sizing: border-box;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    #playground {
+      margin: auto;
+      width: 600px; 
+      height: 600px;
+      position: relative;
+      border: 5px solid black;
+      box-sizing: content-box;
+      /* display: grid;
+      grid-template-columns: repeat(6, 1fr); */
+    }
+
+    button {
+      margin-top: 30px;
+      margin-inline: 10px;
+      width: 150px;
+      height: 50px;
+      background-color: green;
+      color: #fff;
+      border: 1px solid rgb(32, 78, 33);
+      border-radius: 5px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="playground"></div>
+    <button id="play-pause-btn">PLAY</button>
+    <button id="restart-btn">RESTART</button>
+  </div>
+  <script src="snake.js"></script>
+</body>
+</html>
