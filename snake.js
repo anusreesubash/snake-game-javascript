@@ -3,6 +3,11 @@ let ROWS = 60;
 let COLS = 60;
 
 let grids = new Map();
+let initialSnake = [
+  [0, 0],
+  [0, 1],
+  [0, 2],
+]
 
 function initializeCanvas () {
   for (let i=0; i < ROWS; i++) {
@@ -13,7 +18,7 @@ function initializeCanvas () {
       grid.style.top = i*10 + 'px';
       grid.style.height = '10px';
       grid.style.width = '10px';
-      grid.style.backgroundColor = 'black';
+      grid.style.backgroundColor = '#1a211c';
       playground.appendChild(grid);
       let gridPosition = i+ '_' +j;
       grids.set(gridPosition, grid);
@@ -36,15 +41,14 @@ function drawSnake(snake) {
       } else if (currentFood[0] == i && currentFood[1] == j) {
         grid.style.backgroundColor = 'red'
       } else {
-        grid.style.backgroundColor = 'black';
+        grid.style.backgroundColor = '#1a211c';
       }
     }
   }
 }
 
-let currentSnake = [
-  [0, 0],
-]
+let currentSnake = initialSnake;
+let score = 0;
 
 let currentFood = [Math.floor(Math.random() * ROWS), Math.floor(Math.random() * COLS)];
 
@@ -95,12 +99,6 @@ function snakeAteItself([x, y], currentSnake ) {
   } return false;
 }
 
-//stop game
-function stopGame() {
-  playground.style.borderColor = 'red';
-  clearInterval(interval_id[0]);
-}
-
 //check if snake ate food
 function snakeAteFood(currentSnake ) {
   let found = currentSnake.find((item) => {
@@ -123,9 +121,13 @@ function move() {
   let nextHead = currentDirection(head);
   if(!isValidMove(nextHead) || snakeAteItself(nextHead, currentSnake)) {
     stopGame();
+    //disable play/pause btn
+    document.getElementById('play-pause-btn').disabled = true;
     return;
   }
   if (snakeAteFood(currentSnake)) {
+    score = score + 1;
+    document.getElementById('score-board').innerHTML = `SCORE: ${score*5}`
     currentSnake.push(nextHead);
     drawSnake(currentSnake);
     repositionFood();
@@ -138,34 +140,58 @@ function move() {
 
 drawSnake(currentSnake);
 
+var isPaused = false;
+
 function createInterval () {
   let interval_id = setInterval(() => {
-    move();
+    if (!isPaused) {
+      move();
+    }
   }, 100);
   return interval_id;
 }
 
-function restartGame () {
-  playground.style.borderColor = '';
-  createInterval();
-}
- 
 let interval_id = [createInterval()];
+document.getElementById('play-pause-btn').innerHTML = 'PAUSE';
+
+//stop game
+function stopGame() {
+  document.getElementById('game-status').style.display = 'block';
+  if (interval_id[0]) {
+    clearInterval(interval_id[0]);
+  }
+}
 
 //clicking restart button
 let restartBtn = document.getElementById('restart-btn');
 restartBtn.addEventListener('click', () => {
-    clearInterval(interval_id[0]);
-    //remove previous interval
-    interval_id.shift();
-    //add new interval
-    interval_id.push(createInterval());
-    playground.style.borderColor = '';
-    currentSnake = [
-      [0, 0]
-    ]
-    currentFood = [Math.floor(Math.random() * ROWS), Math.floor(Math.random() * COLS)];
+  clearInterval(interval_id[0]);
+  //remove previous interval
+  interval_id.shift();
+  //add new interval
+  interval_id.push(createInterval());
+  isPaused = false;
+  document.getElementById('play-pause-btn').disabled = false;
+  document.getElementById('play-pause-btn').innerHTML = 'PAUSE';
+  playground.style.borderColor = '';
+  document.getElementById('game-status').style.display = 'none';
+  currentSnake = [
+    [0, 0],
+    [0, 1],
+    [0, 2]
+  ]
+  currentFood = [Math.floor(Math.random() * ROWS), Math.floor(Math.random() * COLS)];
 })
+
+//toggle play/pause button
+let playPauseBtn = document.getElementById('play-pause-btn');
+playPauseBtn.addEventListener('click', () => {
+  isPaused = !isPaused;
+  isPaused ? document.getElementById('play-pause-btn').innerHTML = 'PLAY' :  document.getElementById('play-pause-btn').innerHTML = 'PAUSE';
+
+  console.log(isPaused)
+});
+
 
 
 
